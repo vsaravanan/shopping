@@ -16,14 +16,15 @@ public class BuyItem {
     private Item item;
     private Cart cart;
 
-    public BuyItem(Item item, Integer counts) {
-        this.itemName = item.getItemName();
-        this.counts = counts;
-
-        Cart cart = new Cart(item, counts);
-
+    public BuyItem(String itemName) {
+        this.itemName = itemName;
+        this.counts = 1;
     }
 
+    public BuyItem(String itemName, Integer counts) {
+        this.itemName = itemName;
+        this.counts = counts;
+    }
 
 
 }

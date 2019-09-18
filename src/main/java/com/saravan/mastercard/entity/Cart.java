@@ -5,7 +5,6 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.math.BigDecimal;
 
 @Entity
 @Data
@@ -15,7 +14,7 @@ public class Cart {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long cartId; // seqNo
+    private Long cartId;
 
     @ManyToOne
     private Order order;
@@ -23,8 +22,6 @@ public class Cart {
     @ManyToOne
     private Item item;
     private Integer counts;
-
-    private BigDecimal totalPrice = new BigDecimal(0);
 
     public Cart(Item item, Integer counts) {
         this.item = item;

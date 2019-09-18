@@ -1,13 +1,8 @@
 package com.saravan.mastercard.test;
 
-//import com.saravan.mastercard.entity.Order;
-
 import com.saravan.mastercard.entity.Order;
 import com.saravan.mastercard.entity.*;
-import com.saravan.mastercard.repo.CartRepo;
-import com.saravan.mastercard.repo.ItemRepo;
-import com.saravan.mastercard.repo.OrderRepo;
-import com.saravan.mastercard.repo.PromotionRepo;
+import com.saravan.mastercard.repo.*;
 import com.saravan.mastercard.service.CatalogService;
 import com.saravan.mastercard.service.ShoppingService;
 import lombok.extern.log4j.Log4j2;
@@ -20,16 +15,16 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
-//import org.springframework.core.annotation.Order;
 
 @Log4j2
 @SpringBootTest
 @ExtendWith(SpringExtension.class)
 @ActiveProfiles("test")
 @Transactional
-//@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+
 public class TestMasterCardServices {
 
     @Autowired
@@ -50,32 +45,9 @@ public class TestMasterCardServices {
     @Autowired
     CartRepo cartRepo;
 
+    @Autowired
+    BillRepo billRepo;
 
-
-//    @Nested
-//    @Disabled
-//    class TestItemAndPromotion {
-//        @BeforeEach
-//        public void setUp() {
-//
-//            Catalog catalog = new Catalog("A", new BigDecimal(10), true, false);
-//            catalogService.priceItem(catalog);
-//            catalog = new Catalog("B", new BigDecimal(9), true, false);
-//            catalogService.priceItem(catalog);
-//            log.info("TestItemAndPromotion setUp completed");
-//
-//
-//
-//        }
-//
-//        @Test
-////        @org.junit.jupiter.api.Order(1)
-//        public void testItemAndPromotion() {
-//            List<Item> listItems = itemRepo.findAll();
-//            List<Promotion> listPromotions = promotionRepo.findAll();
-//            log.info("testItemAndPromotion completed");
-//        }
-//    }
 
     @Nested
     class TestShopping {
@@ -108,39 +80,40 @@ public class TestMasterCardServices {
         }
 
         @Test
-//        @org.junit.jupiter.api.Order(2)
         public void testShopping1() {
 
-            Shopping shopping = shoppingService.newOrder();
-            Item item = shoppingService.findById ("G");
-            shopping.addCart(item,1);
-            item = shoppingService.findById ("H");
-            shopping.addCart(item,2);
+            List<BuyItem> buyItems = new ArrayList<>();
 
+            buyItems.add(new BuyItem("G"));
+            buyItems.add(new BuyItem("H", 2));
+
+            Shopping shopping = shoppingService.createCheckout(buyItems);
             shoppingService.checkout(shopping);
+
             List<Order> listOrders = orderRepo.findAll();
             List<Cart> listCarts = cartRepo.findAll();
+            List<Bill> listBills = billRepo.findAll();
             log.info("testShopping1 completed");
         }
 
         @Test
         public void testShopping2() {
 
-            Shopping shopping = shoppingService.newOrder();
-            Item item = shoppingService.findById ("A");
-            shopping.addCart(item,1);
-            item = shoppingService.findById ("B");
-            shopping.addCart(item,1);
-            item = shoppingService.findById ("C");
-            shopping.addCart(item,1);
-            item = shoppingService.findById ("F");
-            shopping.addCart(item,1);
+            List<BuyItem> buyItems = new ArrayList<>();
 
+            buyItems.add(new BuyItem("A"));
+            buyItems.add(new BuyItem("B"));
+            buyItems.add(new BuyItem("C"));
+            buyItems.add(new BuyItem("F"));
+
+            Shopping shopping = shoppingService.createCheckout(buyItems);
             shoppingService.checkout(shopping);
 
             List<Order> listOrders = orderRepo.findAll();
             List<Cart> listCarts = cartRepo.findAll();
-            log.info("testShopping completed");
+            List<Bill> listBills = billRepo.findAll();
+
+            log.info("testShopping2 completed");
         }
     }
 

@@ -1,5 +1,6 @@
 package com.saravan.mastercard.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -20,9 +21,12 @@ public class Promotion implements Serializable {
     @Column(unique = true)
     private String itemName;
 
+    private Boolean promo1;
+    private Boolean promo2;
+
     @OneToOne(fetch = FetchType.LAZY)
     @MapsId
-    //@JoinColumn(name = "itemName")
+    @JsonIgnore
     private Item item;
 
     public Promotion(Item item, Boolean promo1, Boolean promo2) {
@@ -32,8 +36,6 @@ public class Promotion implements Serializable {
         this.promo2 = promo2;
     }
 
-    private Boolean promo1;
-    private Boolean promo2;
 
 
     @Override

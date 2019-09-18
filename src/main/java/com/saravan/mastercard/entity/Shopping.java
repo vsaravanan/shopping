@@ -16,7 +16,7 @@ public class Shopping {
 
     Order order;
     List<Cart> carts = new ArrayList<>();
-
+    List<Bill> bills =  new ArrayList<>();
 
     public Shopping(Order order) {
         this.order = order;
@@ -28,6 +28,9 @@ public class Shopping {
         return cart;
     }
 
+    public void addBill(Bill bill) {
+        bills.add(bill);
+    }
 
 
 }

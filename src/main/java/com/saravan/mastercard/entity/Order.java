@@ -21,12 +21,25 @@ public class Order {
 
     private BigDecimal totalSum = new BigDecimal(0);
 
-    private String CustomerName;
 
     @OneToMany(mappedBy="order")
-    private List<Cart> carts;
+    private List<Bill> bill;
 
-    @Transient
-    private List<OrderItem> orderItems;
+    @Override
+    public String toString() {
 
+        String muting;
+        if (bill != null ) {
+            muting = ", bill=" + bill ;
+        }
+        else {
+            muting = ", bill=null";
+        }
+
+        return "Order{" +
+                "orderId=" + orderId +
+                ", totalSum=" + totalSum +
+                muting +
+                '}';
+    }
 }

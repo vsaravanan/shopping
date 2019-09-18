@@ -14,14 +14,19 @@ import java.math.BigDecimal;
 public class Item {
 
 
-
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long itemId;
-
-
     @Id
     @Column(unique = true)
     private String itemName;
+    private BigDecimal itemPrice;
+
+    @OneToOne(mappedBy = "item", cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY, optional = false)
+    private Promotion promotion;
+
+    public Item(String itemName, BigDecimal itemPrice) {
+        this.itemName = itemName;
+        this.itemPrice = itemPrice;
+    }
 
     public void setPromotion(Promotion promotion) {
         if (promotion == null) {
@@ -36,12 +41,6 @@ public class Item {
 
     }
 
-    @OneToOne(mappedBy = "item", cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY, optional = false)
-    private Promotion promotion;
-
-    private BigDecimal itemPrice;
-
     @Override
     public String toString() {
         String strPromotion;
@@ -53,7 +52,6 @@ public class Item {
         }
 
         return "Item{" +
-                "itemId=" + itemId +
                 ", itemName='" + itemName +
                 ", itemPrice=" + itemPrice +
                 strPromotion +
@@ -61,9 +59,5 @@ public class Item {
     }
 
 
-    public Item(String itemName, BigDecimal itemPrice) {
-        this.itemName = itemName;
-        this.itemPrice = itemPrice;
-    }
 
 }

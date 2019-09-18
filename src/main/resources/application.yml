@@ -12,15 +12,12 @@ spring:
     name: shopping-service
   profiles:
     active: test
-#  jpa:
-#    properties:
-#      hibernate:
-#        dialect: org.hibernate.dialect.SQLServer2012Dialect
-#        show_sql: false
-#        use_sql_comments: false
-#        format_sql: false
-#    hibernate:
-#      ddl-auto: none
+
+promo1discount : 0.5
+promo1freeAt : 2
+promo2discount : 0
+promo2freeAt : 3
+
 
 
 

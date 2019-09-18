@@ -27,7 +27,7 @@ public class ShoppingServiceController {
     ItemRepo itemRepo;
 
     @PostMapping("/catalogs")
-    public ApiResponse<String> addCatalogs(@RequestBody List<Catalog> catalogs) {
+    public ApiResponse<List<Item>> addCatalogs(@RequestBody List<Catalog> catalogs) {
 
         for (Catalog catalog : catalogs) {
 
@@ -38,7 +38,7 @@ public class ShoppingServiceController {
         }
 
         List<Item> listItems = itemRepo.findAll();
-        return new ApiResponse<>(HttpStatus.OK, "new Catalogs was Successfully created ", "");
+        return new ApiResponse<>(HttpStatus.OK, "new Catalogs was Successfully created ", listItems);
 
     }
 
@@ -46,14 +46,12 @@ public class ShoppingServiceController {
     public ApiResponse<Order> shopping(@RequestBody List<BuyItem> buyItems) {
 
 
-        Shopping shopping = shoppingService.newOrder();
+        Shopping shopping = shoppingService.createCheckout(buyItems);
 
-        for (BuyItem buyItem : buyItems) {
-
-            Item item = shoppingService.findById (buyItem.getItemName());
-            shopping.addCart(item,buyItem.getCounts());
-
+        if ( shopping.getCarts().size() == 0 ) {
+            return new ApiResponse<>(HttpStatus.OK, "No mating items found in shop ", null);
         }
+
 
         Order order = shoppingService.checkout(shopping);
 
