@@ -18,6 +18,8 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 
 @Log4j2
 @SpringBootTest
@@ -30,20 +32,12 @@ public class TestMasterCardServices {
     @Autowired
     CatalogService catalogService;
 
-    @Autowired
-    ItemRepo itemRepo;
-
-    @Autowired
-    PromotionRepo promotionRepo;
 
     @Autowired
     ShoppingService shoppingService;
 
     @Autowired
     OrderRepo orderRepo;
-
-    @Autowired
-    CartRepo cartRepo;
 
     @Autowired
     BillRepo billRepo;
@@ -55,6 +49,7 @@ public class TestMasterCardServices {
         public void setUp() {
             Catalog catalog = new Catalog("A", new BigDecimal(10), false, true);
             catalogService.priceItem(catalog);
+
             catalog = new Catalog("B", new BigDecimal(5), false, true);
             catalogService.priceItem(catalog);
             catalog = new Catalog("C", new BigDecimal(4), false, true);
@@ -71,6 +66,8 @@ public class TestMasterCardServices {
             catalog = new Catalog("H", new BigDecimal(9), true, false);
             catalogService.priceItem(catalog);
 
+            catalog = new Catalog("I", new BigDecimal(7));
+            catalogService.priceItem(catalog);
 
 
 
@@ -84,6 +81,7 @@ public class TestMasterCardServices {
 
             List<BuyItem> buyItems = new ArrayList<>();
 
+            buyItems.add(new BuyItem("I"));
             buyItems.add(new BuyItem("G"));
             buyItems.add(new BuyItem("H", 2));
 
@@ -91,8 +89,13 @@ public class TestMasterCardServices {
             shoppingService.checkout(shopping);
 
             List<Order> listOrders = orderRepo.findAll();
-            List<Cart> listCarts = cartRepo.findAll();
             List<Bill> listBills = billRepo.findAll();
+
+            Order order = listOrders.stream().findFirst().orElse(null);
+            assertThat(order.getTotalSum().doubleValue()).isEqualTo(30.50);
+            Bill billH = listBills.stream().filter(b -> b.getItemName().equals("H")).findFirst().orElse(null);
+            assertThat(billH.getDiscountedPrice().toString()).isEqualTo("4.50");
+
             log.info("testShopping1 completed");
         }
 
@@ -110,8 +113,15 @@ public class TestMasterCardServices {
             shoppingService.checkout(shopping);
 
             List<Order> listOrders = orderRepo.findAll();
-            List<Cart> listCarts = cartRepo.findAll();
             List<Bill> listBills = billRepo.findAll();
+
+            Order order = listOrders.get(1) ;
+            assertThat(order.getTotalSum().doubleValue()).isEqualTo(17.0);
+            Bill billC = listBills.stream().filter(b -> b.getItemName().equals("C")).findFirst().orElse(null);
+            assertThat(billC.getDiscountedPrice().toString()).isEqualTo("0.00");
+            assertThat(billC.getTotalPrice().toString()).isEqualTo("0.00");
+
+
 
             log.info("testShopping2 completed");
         }

@@ -21,8 +21,8 @@ public class Promotion implements Serializable {
     @Column(unique = true)
     private String itemName;
 
-    private Boolean promo1;
-    private Boolean promo2;
+    private Boolean promo1 = false;
+    private Boolean promo2 = false;
 
     @OneToOne(fetch = FetchType.LAZY)
     @MapsId

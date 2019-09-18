@@ -36,5 +36,9 @@ public class Catalog {
 
     }
 
+    public Catalog(String itemName, BigDecimal itemPrice) {
 
+        this(itemName, itemPrice, false, false);
+
+    }
 }
