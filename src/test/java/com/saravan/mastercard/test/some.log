@@ -1,0 +1,38 @@
+
+ Item I :  normal qty : 1 * $7 = 7
+ Item I :                                       => Total Price 7 => Total Order Sum accumulated : 7
+ Item G :  normal qty : 1 * $10 = 10
+ Item G :                                       => Total Price 10.0 => Total Order Sum accumulated : 17.0
+ Item H :  promo1 qty : 1 * $4.5 = 4.5
+ Item H :  normal qty : 1 * $9 = 9
+ Item H :                                       => Total Price 13.5 => Total Order Sum accumulated : 30.5
+
+ Bill{billId=3, itemName='H', itemPrice=9, promo1=true, promo2=false, promotion='promo 1', counts=2, totalPrice=13.5, discountedPrice=4.5, order=1, totalSum=30.5}
+
+
+
+ Item A :  normal qty : 2 * $10 = 20
+ Item A :                                       => Total Price 20 => Total Order Sum accumulated : 20
+ Item B :  normal qty : 2 * $5 = 10
+ Item B :                                       => Total Price 10 => Total Order Sum accumulated : 30
+ Item C :  promo2 qty : 2 * $0 = 0
+ Item C :                                       => Total Price 0 => Total Order Sum accumulated : 30
+ Item F :  normal qty : 2 * $2 = 4
+ Item F :                                       => Total Price 4 => Total Order Sum accumulated : 34
+ Bill{billId=6, itemName='C', itemPrice=4, promo1=false, promo2=true, promotion='promo 2', counts=2, totalPrice=0, discountedPrice=0, order=2, totalSum=34}
+
+
+ Item A :  normal qty : 3 * $10 = 30
+ Item A :                                       => Total Price 30 => Total Order Sum accumulated : 30
+ Item B :  promo2 qty : 1 * $0 = 0
+ Item B :  normal qty : 1 * $5 = 5
+ Item B :                                       => Total Price 5 => Total Order Sum accumulated : 35
+ Bill{billId=9, itemName='B', itemPrice=5, promo1=false, promo2=true, promotion='promo 2', counts=2, totalPrice=5, discountedPrice=0, order=3, totalSum=35}
+
+ Item A :  normal qty : 3 * $10 = 30
+ Item A :                                       => Total Price 30 => Total Order Sum accumulated : 30
+ Bill{billId=10, itemName='A', itemPrice=10, promo1=false, promo2=true, promotion='promo 2', counts=3, totalPrice=30, discountedPrice=0, order=4, totalSum=30}
+
+
+
+

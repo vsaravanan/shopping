@@ -38,6 +38,18 @@ public class Bill implements Serializable {
     private String promotion;
 
     private Integer counts;
+
+    @JsonIgnore
+    private Integer promo1counts = 0;
+    @JsonIgnore
+    private Integer promo2counts = 0;
+    @JsonIgnore
+    private Integer normalcounts = 0;
+
+    private BigDecimal normalTotal = new BigDecimal(0);
+    private BigDecimal promo1Total = new BigDecimal(0);
+    private BigDecimal promo2Total = new BigDecimal(0);
+
     private BigDecimal totalPrice = new BigDecimal(0);
 
     private BigDecimal discountedPrice;
@@ -45,6 +57,9 @@ public class Bill implements Serializable {
     @JsonIgnore
     @ManyToOne
     private Order order;
+
+
+
 
     public Bill(Cart cart) {
 
@@ -68,6 +83,7 @@ public class Bill implements Serializable {
         }
 
         this.counts = cart.getCounts();
+        this.normalcounts = this.counts;
 
 
     }
