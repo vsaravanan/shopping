@@ -32,7 +32,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Log4j2
 @SpringBootTest
 //@ExtendWith(SpringExtension.class)
-//@RunWith(SpringRunner.class)
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = ShoppingServiceApplication.class)
 @ActiveProfiles("test")

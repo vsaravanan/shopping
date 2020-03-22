@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.saravan</groupId>
-	<artifactId>shopping-service</artifactId>
+	<artifactId>mastercard</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>shopping-service</name>
+	<name>mastercard</name>
 	<description>Spring Boot shopping-service</description>
 
 	<properties>
@@ -42,6 +42,7 @@
 <!--			<groupId>org.springframework.cloud</groupId>-->
 <!--			<artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>-->
 <!--		</dependency>-->
+
 		<dependency>
 			<groupId>io.springfox</groupId>
 			<artifactId>springfox-swagger2</artifactId>
