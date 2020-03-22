@@ -12,7 +12,7 @@ import java.io.Serializable;
 @Entity
 @Data
 @NoArgsConstructor
-@EqualsAndHashCode
+@EqualsAndHashCode(exclude="item")
 public class Promotion implements Serializable {
 
 
