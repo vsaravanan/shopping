@@ -79,8 +79,6 @@ node {
 		echo "MVS JENKINS_HOME : ${JENKINS_HOME}"        // /var/lib/jenkins
 		echo "MVS WORKSPACE : ${WORKSPACE}"              // /var/lib/jenkins/workspace/project
 
-
-
     }
 
 
@@ -93,7 +91,6 @@ node {
             echo "MVS  build "
             sh "sh ./runbuild"
         }
-
 
     }
 
