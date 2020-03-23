@@ -19,7 +19,7 @@ spring.output.ansi.enabled: always
 
 spring:
   application:
-    name: shopping-service
+    name: shopping
   profiles:
     active: test
 
