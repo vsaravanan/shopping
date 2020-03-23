@@ -11,7 +11,7 @@
 	<groupId>com.saravan</groupId>
 	<artifactId>mastercard</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>mastercard</name>
+	<name>shopping</name>
 	<description>Spring Boot shopping-service</description>
 
 	<properties>
@@ -131,7 +131,7 @@
 
 
 	<build>
-		<finalName>Shopping</finalName>
+		<finalName>${project.name}</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
