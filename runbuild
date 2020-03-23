@@ -1,0 +1,9 @@
+#!/bin/sh
+project=shopping
+git pull
+rm -rf /opt/$project/logs/*
+sudo systemctl stop $project
+mvn clean package install -T 1C
+cp ./target/$project.jar /opt/$project/
+sudo systemctl restart $project; systemctl status $project
+
