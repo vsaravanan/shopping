@@ -21,3 +21,15 @@ spring:
   cache:
     type: none
 
+dirLog: /opt/shopping/log
+
+logging:
+  path: ${dirLog}/
+  file: ${dirLog}/shopping-app.log
+  pattern.console:
+  pattern.file: "%d{yyyy-MM-dd HH:mm:ss} | [%thread] | %-5level | %logger{36}.%M - %msg%n"
+  file.max-size: 1MB
+  file.max-history: 7
+  level:
+    #    org.springframework: trace
+    org.hibernate.SQL: debug
