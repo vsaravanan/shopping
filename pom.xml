@@ -131,6 +131,7 @@
 
 
 	<build>
+		<finalName>Shopping</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
