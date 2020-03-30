@@ -1,8 +1,10 @@
 Also please get the api help from
 
-
 http://saravan-js.com:10300/swagger-ui.html
 
+# Challenge
+## In promotional items (method 1), 2nd item would be 50% discount
+## In promotional items (method 2), 3rd item would be free
 
 For example 1:
 
@@ -38,7 +40,7 @@ Shopping 2:
     
 Also, I have added apis    
 
-localhost:10041/api/catalogs    to add inventory
+http://saravan-js.com:10300/api/catalogs    to add inventory
 
 
     [
@@ -60,7 +62,7 @@ localhost:10041/api/catalogs    to add inventory
 	]
     
     
-localhost:10041/api/shopping  to test promo1
+http://saravan-js.com:10300/api/shopping  to test promo1
 
     [
         {
