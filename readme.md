@@ -1,6 +1,7 @@
 Also please get the api help from
 
-http://localhost:10041/swagger-ui.html
+
+http://saravan-js.com:10300/swagger-ui.html
 
 
 For example 1:
