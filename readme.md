@@ -6,7 +6,7 @@ http://saravan-js.com:10300/swagger-ui.html
 ## In promotional items (method 1), 2nd item would be 50% discount
 ## In promotional items (method 2), 3rd item would be free
 
-==
+===
 
 For example 1:
 
