@@ -2,7 +2,7 @@ Also please get the api help from
 
 http://saravan-js.com:10300/swagger-ui.html
 
-# Challenge
+#  Challenge
 ## In promotional items (method 1), 2nd item would be 50% discount
 ## In promotional items (method 2), 3rd item would be free
 
