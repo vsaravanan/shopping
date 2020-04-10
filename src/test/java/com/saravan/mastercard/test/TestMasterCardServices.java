@@ -1,9 +1,13 @@
 package com.saravan.mastercard.test;
 
 import com.saravan.mastercard.ShoppingServiceApplication;
-import com.saravan.mastercard.entity.*;
-
+import com.saravan.mastercard.entity.Bill;
+import com.saravan.mastercard.entity.BuyItem;
+import com.saravan.mastercard.entity.Catalog;
+import com.saravan.mastercard.entity.Order;
 import com.saravan.mastercard.repo.BillRepo;
+import com.saravan.mastercard.repo.BuyItemRepo;
+import com.saravan.mastercard.repo.ItemRepo;
 import com.saravan.mastercard.repo.OrderRepo;
 import com.saravan.mastercard.service.CatalogService;
 import com.saravan.mastercard.service.ShoppingService;
@@ -17,7 +21,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,20 +35,28 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @Log4j2
 @SpringBootTest
-//@ExtendWith(SpringExtension.class)
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = ShoppingServiceApplication.class)
 @ActiveProfiles("test")
-@Transactional
-
+//@AutoConfigureTestDatabase(replace= AutoConfigureTestDatabase.Replace.NONE)
+//@Transactional
 public class TestMasterCardServices {
 
     @Autowired
     CatalogService catalogService;
 
+//    @Autowired
+//    final JdbcTemplate jdbcTemplate = null;
+
 
     @Autowired
     ShoppingService shoppingService;
+
+    @Autowired
+    ItemRepo itemRepo;
+
+    @Autowired
+    BuyItemRepo buyItemRepo;
 
     @Autowired
     OrderRepo orderRepo;
@@ -54,7 +65,8 @@ public class TestMasterCardServices {
     BillRepo billRepo;
 
 
-//    @Nested
+
+    //    @Nested
 //    class TestShopping {
 //        @BeforeEach
     @Before
@@ -86,14 +98,27 @@ public class TestMasterCardServices {
 
         }
 
+        private void clean() {
+
+            buyItemRepo.deleteAll();
+            billRepo.deleteAll();
+            orderRepo.deleteAll();
+
+        }
+
         @Test
         public void testShopping1() {
 
+            clean();
+
             List<BuyItem> buyItems = new ArrayList<>();
+            buyItemRepo.deleteAll();
 
             buyItems.add(new BuyItem("I"));
             buyItems.add(new BuyItem("G"));
             buyItems.add(new BuyItem("H", 2));
+
+            buyItemRepo.saveAll(buyItems);
 
             Order shopping = shoppingService.createCheckout(buyItems);
             shoppingService.checkout(shopping);
@@ -109,8 +134,12 @@ public class TestMasterCardServices {
             log.info("testShopping1 completed");
         }
 
+
+
         @Test
         public void testShopping2() {
+
+            clean();
 
             List<BuyItem> buyItems = new ArrayList<>();
 
@@ -120,6 +149,8 @@ public class TestMasterCardServices {
             buyItems.add(new BuyItem("B", 2));
             buyItems.add(new BuyItem("E", 1));
             buyItems.add(new BuyItem("F", 2));
+
+            buyItemRepo.saveAll(buyItems);
 
             Order shopping = shoppingService.createCheckout(buyItems);
             shoppingService.checkout(shopping);
@@ -136,7 +167,6 @@ public class TestMasterCardServices {
             log.info(billC);
 
 
-
             log.info("testShopping2 completed");
         }
 
@@ -144,11 +174,15 @@ public class TestMasterCardServices {
         @Test
         public void testShopping3() {
 
+            clean();
+
             List<BuyItem> buyItems = new ArrayList<>();
 
 
             buyItems.add(new BuyItem("A", 3));
             buyItems.add(new BuyItem("B", 2));
+
+            buyItemRepo.saveAll(buyItems);
 
             Order shopping = shoppingService.createCheckout(buyItems);
             shoppingService.checkout(shopping);
@@ -166,16 +200,21 @@ public class TestMasterCardServices {
                     .reduce(BigDecimal.ZERO, BigDecimal::add);
             assertThat( sum.doubleValue()).isEqualTo(5.00);
 
+            log.info("testShopping3 completed");
 
         }
 
         @Test
         public void testShopping4() {
 
+            clean();
+
             List<BuyItem> buyItems = new ArrayList<>();
 
 
             buyItems.add(new BuyItem("A", 3));
+
+            buyItemRepo.saveAll(buyItems);
 
             Order shopping = shoppingService.createCheckout(buyItems);
             shoppingService.checkout(shopping);
@@ -191,8 +230,13 @@ public class TestMasterCardServices {
                     .filter(f -> f.getSellingPrice().doubleValue() == (0.00))
                     .findFirst().orElse(null);
             assert billA != null;
+
+//            jdbcTemplate.execute("insert into item values ('AA',10.00)");
+//            List<Item> items = itemRepo.findAll();
+
             assertThat(billA.getSellingPrice().doubleValue()).isEqualTo(0.00);
 
+            log.info("testShopping4 completed");
 
         }
 //    }
