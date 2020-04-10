@@ -1,35 +1,34 @@
 package com.saravan.mastercard.service;
 
 import com.saravan.mastercard.entity.*;
-import com.saravan.mastercard.repo.BillRepo;
-import com.saravan.mastercard.repo.ItemRepo;
-import com.saravan.mastercard.repo.OrderRepo;
+import com.saravan.mastercard.repo.*;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
+import static java.util.stream.Collectors.groupingBy;
 
 @Service
 @Log4j2
 public class ShoppingService {
 
 
-    @Autowired
-    OrderRepo orderRepo;
 
     @Autowired
     ItemRepo itemRepo;
 
     @Autowired
+    OrderRepo orderRepo;
+
+    @Autowired
     BillRepo billRepo;
-
-
 
     @Value("${promo1discount}")
     BigDecimal promo1discount;
@@ -45,160 +44,128 @@ public class ShoppingService {
 
     BigDecimal bigzero = new BigDecimal(0);
 
-    private Shopping newOrder() {
-        Order order = new Order();
-        Shopping shopping = new Shopping(order);
-        return shopping;
-    }
 
-    public Shopping createCheckout(List<BuyItem> buyItems) {
-        Shopping shopping = newOrder();
+    public Order createCheckout(List<BuyItem> buyItems) {
 
-        for (BuyItem buyItem : buyItems) {
+        Order shopping = new Order();
 
-            Item item = findById (buyItem.getItemName());
+        buyItems.forEach(f -> {
+            Item item = findById (f.getItemName());
             if (item != null) {
-                shopping.addCart(item, buyItem.getCounts());
+                shopping.addBill(item, f.getCounts());
             }
+        });
 
-        }
         return shopping;
+
+
     }
 
     public Item findById(String itemName) {
         return itemRepo.findById(itemName).orElse(null);
     }
 
-    private void calculatePromo1(Shopping shopping) {
 
-
-        if (shopping.getBills().size() == 0) {
-            return;
-        }
-
-
-        List<Bill> bills = shopping.getBills().stream()
-                .filter(Bill::getPromo1).collect(Collectors.toList());
-
-        for (Bill bill : bills) {
-
-            int findpromo1count = bill.getNormalcounts() / promo1freeAt;
-
-            bill.setNormalcounts(bill.getNormalcounts() - findpromo1count);
-            bill.setPromo1counts(bill.getPromo1counts() + findpromo1count);
-
-        }
-
+    private static Predicate< Bill > predicatePromo1() {
+        return p -> p.getItem().getPromotion().getPromo1();
+    }
+    protected static Predicate< Bill > predicatePromo2() {
+        return p -> p.getItem().getPromotion().getPromo2();
+    }
+    protected static Predicate< Bill > predicateNormal() {
+        return p -> ! (
+                p.getItem().getPromotion().getPromo1() ||
+                p.getItem().getPromotion().getPromo2() ) ;
     }
 
-    private void calculatePromo2(Shopping shopping) {
+    private Order genericPromo(Order shopping,
+                               Predicate< Bill > predicatePromo,
+                               Integer promofreeAt,
+                               BigDecimal promoDiscount) {
 
-        if (shopping.getBills().size() == 0) {
-            return;
+        Order order = new Order();
+
+        if (shopping.getListBills().size() == 0) {
+            return order;
         }
 
-        List<Bill> bills = shopping.getBills().stream()
-                .filter(Bill::getPromo2).collect(Collectors.toList());
+
+        List< Bill > bills = shopping.getListBills().stream()
+                .filter(predicatePromo).collect(Collectors.toList());
+
+        if (bills.size() == 0) {
+            return order;
+        }
 
         Collections.sort(bills, new BillPriceSorter());
 
-        // loop promo2 items
-        int promo2count = 0;
+        List< Bill > items = new LinkedList<>();
+
+
         for (Bill bill : bills) {
-            Integer currentIndex = bills.indexOf(bill);
-
-            int cartIndex = 0;
-
-            while (cartIndex++ <= bill.getNormalcounts()) {
-                promo2count++;
-                if (promo2count == promo2freeAt) {
-
-                    Bill tmpBill = null;
-                    Iterator<Bill> iter = bills.listIterator(currentIndex);
-                    int iterNav = 0;
-                    while (iterNav++ < promo2freeAt && iter.hasNext()) {
-                        tmpBill = iter.next();
-                    }
-
-                    if (!bill.equals(tmpBill)) {
-                        tmpBill.setNormalcounts(tmpBill.getNormalcounts() - 1);
-                        tmpBill.setPromo2counts(tmpBill.getPromo2counts() + 1);
-                        promo2count = 0;
-                    } else {
-                        promo2count--;
-                    }
-
-                }
-
-            }
-
-
+            IntStream.range(0,bill.getQty())
+                    .forEach(i -> {
+                        try {
+                            Bill billCloned =  (Bill) bill.clone();
+                            billCloned.setQty(1);
+                            items.add(billCloned);
+                        } catch (CloneNotSupportedException e) {
+                            e.printStackTrace();
+                        }
+                    });
         }
+
+
+        for (int i = 0;  i < items.size(); i++) {
+            Bill bill = null;
+            if (promofreeAt > 0 && (i+1) % promofreeAt == 0) {
+                bill = items.get(items.size() - 1);
+                items.remove(items.size() - 1);
+                BigDecimal promoPriceAfterDiscount = bill.getItemPrice().multiply(promoDiscount);
+                bill.setSellingPrice(promoPriceAfterDiscount);
+                items.add(i,bill);
+            }
+            else {
+                bill = items.get(i);
+            }
+            order.addBill(bill);
+        }
+
+        return order;
+
     }
 
 
-    public Order checkout(Shopping shopping) {
-        Order order = orderRepo.saveAndFlush(shopping.getOrder());
+
+    public Order checkout(Order shopping) {
+
+        Order orderPromo1 = genericPromo(shopping, predicatePromo1(), promo1freeAt, promo1discount);
+        Order orderPromo2 = genericPromo(shopping, predicatePromo2(), promo2freeAt, promo2discount);
+        Order orderNormal = genericPromo(shopping, predicateNormal(), -1, new BigDecimal(100) );
 
 
-        shopping.getCarts().forEach(f -> shopping.addBill (new Bill(f)));
+        List< Bill > finalBill = new ArrayList<>();
+        finalBill.addAll(orderPromo1.getListBills());
+        finalBill.addAll(orderPromo2.getListBills());
+        finalBill.addAll(orderNormal.getListBills());
 
+        Order finalOrder = new Order();
 
-        calculatePromo1(shopping);
-        calculatePromo2(shopping);
+        finalBill.forEach(f -> {
+            f.setOrder(finalOrder);
+            log.info(f.toString());
+        });
 
-        // filter other than promo2 items
-        List<Bill> bills = shopping.getBills();
+        finalOrder.setListBills(finalBill);
+        finalOrder.recalc();
 
-        order.setTotalSum(bigzero);
-        for (Bill bill : bills) {
+        orderRepo.saveAndFlush(finalOrder);
 
-            if ( bill.getPromo1()) {
-                BigDecimal promo1priceAfterDiscount = bill.getItemPrice().multiply(promo1discount);
-                bill.setDiscountedPrice(promo1priceAfterDiscount);
-                bill.setPromo1Total(bill.getDiscountedPrice().multiply(new BigDecimal(bill.getPromo1counts())));
-
-                if (bill.getPromo1counts() > 0)  {
-                    log.info("Item {} :  promo1 qty : {} * ${} = {}",
-                            bill.getItemName(), bill.getPromo1counts(),  bill.getDiscountedPrice(), bill.getPromo1Total() ) ;
-                }
-
-            }
-            if ( bill.getPromo2()) {
-                BigDecimal promo2priceAfterDiscount = bill.getItemPrice().multiply(promo2discount);
-                bill.setDiscountedPrice(promo2priceAfterDiscount);
-                bill.setPromo2Total(bill.getDiscountedPrice().multiply(new BigDecimal(bill.getPromo2counts())));
-
-                if (bill.getPromo2counts() > 0)  {
-                    log.info("Item {} :  promo2 qty : {} * ${} = {}",
-                            bill.getItemName(), bill.getPromo2counts(),  bill.getDiscountedPrice(), bill.getPromo2Total() ) ;
-                }
-            }
-            bill.setNormalTotal(bill.getItemPrice().multiply(new BigDecimal(bill.getNormalcounts())));
-
-            if (bill.getNormalcounts() > 0)  {
-                log.info("Item {} :  normal qty : {} * ${} = {}",
-                        bill.getItemName(), bill.getNormalcounts(),  bill.getItemPrice(), bill.getNormalTotal() ) ;
-            }
-
-
-            bill.setTotalPrice( bill.getNormalTotal().add(bill.getPromo1Total()).add(bill.getPromo2Total()));
-            order.setTotalSum( order.getTotalSum().add(bill.getTotalPrice()));
-            bill.setOrder (order);
-
-            log.info("Item {} :                                       => Total Price {} => Total Order Sum accumulated : {} ",
-                    bill.getItemName(), bill.getTotalPrice(), order.getTotalSum());
-
-        }
-
-
-        billRepo.saveAll(shopping.getBills());
+        billRepo.saveAll(finalOrder.getListBills());
         billRepo.flush();
-        order.setBill(shopping.getBills());
-        orderRepo.saveAndFlush(order);
 
 
-        return order;
+        return finalOrder;
 
     }
 

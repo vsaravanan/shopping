@@ -43,13 +43,13 @@ public class ShoppingServiceController {
     }
 
     @PostMapping("/shopping")
-    public ApiResponse<Order> shopping(@RequestBody List<BuyItem> buyItems) {
+    public ApiResponse< Order > shopping(@RequestBody List<BuyItem> buyItems) {
 
 
-        Shopping shopping = shoppingService.createCheckout(buyItems);
+        Order shopping = shoppingService.createCheckout(buyItems);
 
-        if ( shopping.getCarts().size() == 0 ) {
-            return new ApiResponse<>(HttpStatus.OK, "No mating items found in shop ", null);
+        if ( shopping.getListBills().size() == 0 ) {
+            return new ApiResponse<>(HttpStatus.OK, "No matching items found in shop ", null);
         }
 
 

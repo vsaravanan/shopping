@@ -2,6 +2,7 @@ package com.saravan.mastercard.test;
 
 import com.saravan.mastercard.ShoppingServiceApplication;
 import com.saravan.mastercard.entity.*;
+
 import com.saravan.mastercard.repo.BillRepo;
 import com.saravan.mastercard.repo.OrderRepo;
 import com.saravan.mastercard.service.CatalogService;
@@ -94,16 +95,16 @@ public class TestMasterCardServices {
             buyItems.add(new BuyItem("G"));
             buyItems.add(new BuyItem("H", 2));
 
-            Shopping shopping = shoppingService.createCheckout(buyItems);
+            Order shopping = shoppingService.createCheckout(buyItems);
             shoppingService.checkout(shopping);
 
-            List<Order> listOrders = orderRepo.findAll();
-            List<Bill> listBills = billRepo.findAll();
+            List< Order > listOrders = orderRepo.findAll();
+            List< Bill > listBills = billRepo.findAll();
 
             Order order = listOrders.stream().findFirst().orElse(null);
             assertThat(order.getTotalSum().doubleValue()).isEqualTo(30.50);
             Bill billH = listBills.stream().filter(b -> b.getItemName().equals("H")).findFirst().orElse(null);
-            assertThat(billH.getDiscountedPrice().doubleValue()).isEqualTo(4.50);
+            assertThat(billH.getSellingPrice().doubleValue()).isEqualTo(4.50);
             log.info(billH);
             log.info("testShopping1 completed");
         }
@@ -114,23 +115,24 @@ public class TestMasterCardServices {
             List<BuyItem> buyItems = new ArrayList<>();
 
 
+            buyItems.add(new BuyItem("C", 2));
             buyItems.add(new BuyItem("A", 2));
             buyItems.add(new BuyItem("B", 2));
-            buyItems.add(new BuyItem("C", 2));
+            buyItems.add(new BuyItem("E", 1));
             buyItems.add(new BuyItem("F", 2));
 
-            Shopping shopping = shoppingService.createCheckout(buyItems);
+            Order shopping = shoppingService.createCheckout(buyItems);
             shoppingService.checkout(shopping);
 
-            List<Order> listOrders = orderRepo.findAll();
-            List<Bill> listBills = billRepo.findAll();
+            List< Order > listOrders = orderRepo.findAll();
+            List< Bill > listBills = billRepo.findAll();
 
             Order order = listOrders.stream().findFirst().orElse(null) ;
-            assertThat(order.getTotalSum().doubleValue()).isEqualTo(34.0);
+            assertThat(order.getTotalSum().doubleValue()).isEqualTo(42.0);
             Bill billC = listBills.stream().filter(b -> b.getItemName().equals("C")).findFirst().orElse(null);
             assert billC != null;
-            assertThat(billC.getDiscountedPrice().doubleValue()).isEqualTo(0.00);
-            assertThat( billC.getTotalPrice().doubleValue()).isEqualTo(0.00);
+            assertThat(billC.getSellingPrice().doubleValue()).isEqualTo(0.00);
+            assertThat(billC.getTotal().doubleValue()).isEqualTo(0.00);
             log.info(billC);
 
 
@@ -148,19 +150,21 @@ public class TestMasterCardServices {
             buyItems.add(new BuyItem("A", 3));
             buyItems.add(new BuyItem("B", 2));
 
-            Shopping shopping = shoppingService.createCheckout(buyItems);
+            Order shopping = shoppingService.createCheckout(buyItems);
             shoppingService.checkout(shopping);
 
-            List<Order> listOrders = orderRepo.findAll();
-            List<Bill> listBills = billRepo.findAll();
+            List< Order > listOrders = orderRepo.findAll();
+            List< Bill > listBills = billRepo.findAll();
             Order order = listOrders.stream().findFirst().orElse(null) ;
             assert order != null;
             assertThat(order.getTotalSum().doubleValue()).isEqualTo(35);
             Bill billB = listBills.stream().filter(b -> b.getItemName().equals("B")).findFirst().orElse(null);
             assert billB != null;
-            assertThat(billB.getDiscountedPrice().doubleValue()).isEqualTo(0.00);
-            assertThat( billB.getTotalPrice().doubleValue()).isEqualTo(5.00);
-            log.info(billB);
+            assertThat(billB.getSellingPrice().doubleValue()).isEqualTo(0.00);
+            BigDecimal sum = listBills.stream().filter(b -> b.getItemName().equals("B"))
+                    .map(x -> x.getTotal())
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+            assertThat( sum.doubleValue()).isEqualTo(5.00);
 
 
         }
@@ -173,20 +177,21 @@ public class TestMasterCardServices {
 
             buyItems.add(new BuyItem("A", 3));
 
-            Shopping shopping = shoppingService.createCheckout(buyItems);
+            Order shopping = shoppingService.createCheckout(buyItems);
             shoppingService.checkout(shopping);
 
 
-            List<Order> listOrders = orderRepo.findAll();
-            List<Bill> listBills = billRepo.findAll();
+            List< Order > listOrders = orderRepo.findAll();
+            List< Bill > listBills = billRepo.findAll();
             Order order = listOrders.stream().findFirst().orElse(null) ;
             assert order != null;
-            assertThat(order.getTotalSum().doubleValue()).isEqualTo(30);
-            Bill billA = listBills.stream().filter(b -> b.getItemName().equals("A")).findFirst().orElse(null);
+
+            assertThat(order.getTotalSum().doubleValue()).isEqualTo(20);
+            Bill billA = listBills.stream().filter(b -> b.getItemName().equals("A"))
+                    .filter(f -> f.getSellingPrice().doubleValue() == (0.00))
+                    .findFirst().orElse(null);
             assert billA != null;
-            assertThat(billA.getDiscountedPrice().doubleValue()).isEqualTo(0.00);
-            assertThat( billA.getTotalPrice().doubleValue()).isEqualTo(30.00);
-            log.info(billA);
+            assertThat(billA.getSellingPrice().doubleValue()).isEqualTo(0.00);
 
 
         }

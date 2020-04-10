@@ -14,7 +14,6 @@ public class BuyItem {
     private String itemName;
     private Integer counts;
     private Item item;
-    private Cart cart;
 
     public BuyItem(String itemName) {
         this.itemName = itemName;
