@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -21,19 +22,50 @@ public class Order {
 
     private BigDecimal totalSum = new BigDecimal(0);
 
-
     @OneToMany(mappedBy="order")
-    private List<Bill> bill;
+    private List< Bill > listBills = new ArrayList<>();
+
+    public void addBill(Item item, Integer counts) {
+        if (item == null || counts < 1)  return;
+
+        Bill bill = new Bill(item, counts);
+        addBill(bill);
+
+    }
+
+
+
+    public void addBill(Bill bill) {
+        if  (listBills.contains(bill)) {
+
+            listBills.stream().filter(f -> f.equals(bill)).forEach(f -> {
+
+                f.setQty( f.getQty() + 1);
+
+            });
+        }
+        else {
+            listBills.add(bill);
+        }
+    }
+
+    public void recalc() {
+        totalSum = new BigDecimal(0);
+        listBills.forEach(f -> {
+            totalSum = totalSum.add(f.getTotal());
+        });
+    }
+
 
     @Override
     public String toString() {
 
         String muting;
-        if (bill != null ) {
-            muting = ", bill=" + bill ;
+        if (listBills != null ) {
+            muting = ", listBills=" + listBills ;
         }
         else {
-            muting = ", bill=null";
+            muting = ", listBills=null";
         }
 
         return "Order{" +
