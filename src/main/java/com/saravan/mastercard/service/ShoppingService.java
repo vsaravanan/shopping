@@ -25,6 +25,9 @@ public class ShoppingService {
     ItemRepo itemRepo;
 
     @Autowired
+    BuyItemRepo buyItemRepo;
+
+    @Autowired
     OrderRepo orderRepo;
 
     @Autowired
@@ -47,6 +50,9 @@ public class ShoppingService {
 
     public Order createCheckout(List<BuyItem> buyItems) {
 
+        buyItemRepo.saveAll(buyItems);
+        buyItemRepo.flush();
+
         Order shopping = new Order();
 
         buyItems.forEach(f -> {
@@ -64,7 +70,6 @@ public class ShoppingService {
     public Item findById(String itemName) {
         return itemRepo.findById(itemName).orElse(null);
     }
-
 
     private static Predicate< Bill > predicatePromo1() {
         return p -> p.getItem().getPromotion().getPromo1();
@@ -153,7 +158,6 @@ public class ShoppingService {
 
         finalBill.forEach(f -> {
             f.setOrder(finalOrder);
-            log.info(f.toString());
         });
 
         finalOrder.setListBills(finalBill);
@@ -164,6 +168,10 @@ public class ShoppingService {
         billRepo.saveAll(finalOrder.getListBills());
         billRepo.flush();
 
+        finalBill.forEach(f -> {
+            log.info(f);
+        });
+        log.info(" Order : " + finalOrder.getOrderId() + " totalSum : " + finalOrder.getTotalSum());
 
         return finalOrder;
 

@@ -118,8 +118,6 @@ public class TestMasterCardServices {
             buyItems.add(new BuyItem("G"));
             buyItems.add(new BuyItem("H", 2));
 
-            buyItemRepo.saveAll(buyItems);
-
             Order shopping = shoppingService.createCheckout(buyItems);
             shoppingService.checkout(shopping);
 
@@ -130,7 +128,7 @@ public class TestMasterCardServices {
             assertThat(order.getTotalSum().doubleValue()).isEqualTo(30.50);
             Bill billH = listBills.stream().filter(b -> b.getItemName().equals("H")).findFirst().orElse(null);
             assertThat(billH.getSellingPrice().doubleValue()).isEqualTo(4.50);
-            log.info(billH);
+//            log.info(billH);
             log.info("testShopping1 completed");
         }
 
@@ -150,8 +148,6 @@ public class TestMasterCardServices {
             buyItems.add(new BuyItem("E", 1));
             buyItems.add(new BuyItem("F", 2));
 
-            buyItemRepo.saveAll(buyItems);
-
             Order shopping = shoppingService.createCheckout(buyItems);
             shoppingService.checkout(shopping);
 
@@ -164,7 +160,7 @@ public class TestMasterCardServices {
             assert billC != null;
             assertThat(billC.getSellingPrice().doubleValue()).isEqualTo(0.00);
             assertThat(billC.getTotal().doubleValue()).isEqualTo(0.00);
-            log.info(billC);
+//            log.info(billC);
 
 
             log.info("testShopping2 completed");
@@ -181,8 +177,6 @@ public class TestMasterCardServices {
 
             buyItems.add(new BuyItem("A", 3));
             buyItems.add(new BuyItem("B", 2));
-
-            buyItemRepo.saveAll(buyItems);
 
             Order shopping = shoppingService.createCheckout(buyItems);
             shoppingService.checkout(shopping);
@@ -213,8 +207,6 @@ public class TestMasterCardServices {
 
 
             buyItems.add(new BuyItem("A", 3));
-
-            buyItemRepo.saveAll(buyItems);
 
             Order shopping = shoppingService.createCheckout(buyItems);
             shoppingService.checkout(shopping);

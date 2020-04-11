@@ -17,6 +17,7 @@ public class BuyItem {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonIgnore
     private Long buyId;
 
     private String itemName;
@@ -25,6 +26,7 @@ public class BuyItem {
 //    @OneToOne(fetch = FetchType.LAZY)
     @OneToOne
 //    @MapsId
+    @JsonIgnore
     @JoinColumn(name = "itemName", insertable = false, updatable =  false, nullable = true)
     private Item item = null;
 

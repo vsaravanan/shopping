@@ -6,179 +6,152 @@ http://saravan-js.com:10300/swagger-ui.html
 ## In promotional items (method 1), 2nd item would be 50% discount
 ## In promotional items (method 2), 3rd item would be free
 
-===
+===========================================================
 
-For example 1:
+Populate catalog 
 
-I have renamed A to G and B to H. 
-
-            catalog = new Catalog("G", new BigDecimal(10), true, false);
-            catalogService.priceItem(catalog);
-            catalog = new Catalog("H", new BigDecimal(9), true, false);
-            catalogService.priceItem(catalog);
-
-Rest of the them has more clarity from TestMasterCardServices
-
-Please run the test and find the output log from console.
-
-Shopping 1:
-
-    G promo1 newPrice : 10.00
-    G : cart.getTotalPrice() : 10.00, order.getTotalSum() : 10.00
-    H promo1 newPrice : 9.00
-    H promo1 newPrice : 4.500
-    H : cart.getTotalPrice() : 13.500, order.getTotalSum() : 23.500
-
-Shopping 2:
-
-    A promo2 newPrice : 10.00
-    A : cart.getTotalPrice() : 10.00, order.getTotalSum() : 10.00
-    B promo2 newPrice : 5.00
-    B : cart.getTotalPrice() : 5.00, order.getTotalSum() : 15.00
-    C promo2 newPrice : 0
-    C : cart.getTotalPrice() : 0, order.getTotalSum() : 15.00
-    F no promo newPrice : 2.00
-    F : cart.getTotalPrice() : 2.00, order.getTotalSum() : 17.00
+ /api/catalogs
     
-Also, I have added apis    
-
-http://saravan-js.com:10300/api/catalogs    to add inventory
-
-
     [
-        {
-            "itemName" : "G",
-            "itemPrice" : "10",
-            "promo1" : true,
-            "promo2" : false
-            
-        }
-        ,
-        {
-            "itemName" : "H",
-            "itemPrice" : "9",
-            "promo1" : true,
-            "promo2" : false
-        
-        }
-	]
-    
-    
-http://saravan-js.com:10300/api/shopping  to test promo1
-
-    [
-        {
-            "itemName" : "G",
-            "counts" : 1
-        }
-        ,
-        {
-            "itemName" : "H",
-            "counts" : 2
-        
-        }
+     {
+       "itemName": "A",
+       "itemPrice": 10,
+       "promo1": false,
+       "promo2": true
+     },
+     {
+       "itemName": "B",
+       "itemPrice": 5,
+       "promo1": false,
+       "promo2": true
+     },
+     {
+       "itemName": "C",
+       "itemPrice": 4,
+       "promo1": false,
+       "promo2": true
+     },
+     {
+       "itemName": "D",
+       "itemPrice": 3,
+       "promo1": false,
+       "promo2": true
+     },
+     {
+       "itemName": "E",
+       "itemPrice": 8,
+       "promo1": false,
+       "promo2": true
+     },
+     {
+       "itemName": "F",
+       "itemPrice": 2,
+       "promo1": false,
+       "promo2": false
+     },
+     {
+       "itemName": "G",
+       "itemPrice": 10,
+       "promo1": true,
+       "promo2": false
+     },
+     {
+       "itemName": "H",
+       "itemPrice": 9,
+       "promo1": true,
+       "promo2": false
+     },
+     {
+       "itemName": "I",
+       "itemPrice": 7,
+       "promo1": false,
+       "promo2": false
+     }
     ]
 
-Response would be
+# Catalog
+![Catalog](./doc/catalog.jpg?raw=true)
 
-    {
-        "status": "OK",
-        "message": "shopping checkout was successfully finished ",
-        "result": {
-            "orderId": 1,
-            "totalSum": 23.500,
-            "carts": null,
-            "orderItems": [
-                {
-                    "itemName": "G",
-                    "counts": 1,
-                    "originalPrice": 10.00,
-                    "discountedPrice": 10.00,
-                    "total": 10.00
-                },
-                {
-                    "itemName": "H",
-                    "counts": 2,
-                    "originalPrice": 9.00,
-                    "discountedPrice": 4.500,
-                    "total": 13.500
-                }
-            ],
-            "customerName": null
-        }
-    }    
+Use case 1 : As per Promo1, second item would be 50% discount
+
+    /api/shopping
     
-
-Also you can try shopping2 to test promo2
-
     [
-        {
-            "itemName" : "A",
-            "counts" : 1
-        }
-        ,
-        {
-            "itemName" : "B",
-            "counts" : 1
-        
-        }
-        ,
-        {
-            "itemName" : "C",
-            "counts" : 1
-        
-        }
-        ,
-        {
-            "itemName" : "F",
-            "counts" : 1
-        
-        }
+      {
+        "itemName": "I",     "counts": 1
+      },
+      {
+        "itemName": "G",     "counts": 1
+      },
+      {
+        "itemName": "H",     "counts": 2
+      }
+    ]
+
+
+# use case 1
+![use case 1](./doc/usecase1.jpg?raw=true)
+
+
+Use case 2 : As per Promo2,  third item will be free, but third item should be cheaper from the group
+
+    /api/shopping
     
-    ]    
-    
-    
-Response would be
-    
-    {
-        "status": "OK",
-        "message": "shopping checkout was successfully finished ",
-        "result": {
-            "orderId": 2,
-            "totalSum": 17.00,
-            "carts": null,
-            "orderItems": [
-                {
-                    "itemName": "A",
-                    "counts": 1,
-                    "originalPrice": 10.00,
-                    "discountedPrice": 10.00,
-                    "total": 10.00
-                },
-                {
-                    "itemName": "B",
-                    "counts": 1,
-                    "originalPrice": 5.00,
-                    "discountedPrice": 5.00,
-                    "total": 5.00
-                },
-                {
-                    "itemName": "C",
-                    "counts": 1,
-                    "originalPrice": 4.00,
-                    "discountedPrice": 0,
-                    "total": 0
-                },
-                {
-                    "itemName": "F",
-                    "counts": 1,
-                    "originalPrice": 2.00,
-                    "discountedPrice": 0,
-                    "total": 2.00
-                }
-            ],
-            "customerName": null
-        }
-    }
+    [
+      {
+        "itemName": "C",     "counts": 2
+      },
+      {
+        "itemName": "A",     "counts": 2
+      },
+      {
+        "itemName": "B",     "counts": 2
+      },
+      {
+        "itemName": "E",     "counts": 1
+      },
+      {
+        "itemName": "F",     "counts": 2
+      }
+    ]
+
+
+# use case 2
+![use case 2](./doc/usecase2.jpg?raw=true)
+
+Use Case 3 :  Promo 2 third item will be free
+
+    /api/shopping
 
     
+    [
+    
+      {
+        "itemName": "A",     "counts": 3
+      },
+      {
+        "itemName": "B",     "counts": 2
+      }
+      
+    ]
+
+
+# use case 3
+![use case 3](./doc/usecase3.jpg?raw=true)
+
+Use Case 4 :  Promo 2 third item will be free
+
+    /api/shopping
+    
+    [
+    
+      {
+        "itemName": "A",     "counts": 3
+      }
+      
+    ]
+
+
+# use case 4
+![use case 4](./doc/usecase4.jpg?raw=true)
+

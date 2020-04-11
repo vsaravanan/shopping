@@ -31,6 +31,7 @@ public class Bill implements Serializable, Cloneable {
     private Order order;
 
     @ManyToOne
+    @JsonIgnore
     private Item item;
 
     private String itemName;
@@ -98,7 +99,10 @@ public class Bill implements Serializable, Cloneable {
 
         String discountedMsg = (sellingPrice != null && sellingPrice.compareTo(itemPrice) < 0 ) ? promotion : "";
 
-        return String.format("Item %s : qty : %d * $ %10.2f = %10.2f : %s",
+        String orderId = order != null && order.getOrderId() != null ? String.valueOf(order.getOrderId()) : "";
+
+        return String.format("Order %s : Item %s : qty : %d * $ %10.2f = %10.2f : %s",
+                orderId,
                 itemName,
                 qty,
                 sellingPrice,
