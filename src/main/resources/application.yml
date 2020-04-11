@@ -1,13 +1,13 @@
-#spring.application.name: boot-admin-client
-#spring.boot.admin.client.url: http://localhost:10000
-#management:
-#  endpoints:
-#    web:
-#      exposure:
-#        include: "*"
-#  endpoint:
-#    health:
-#      show-details: ALWAYS
+spring.application.name: boot-admin-client
+spring.boot.admin.client.url: http://localhost:10000
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: ALWAYS
 
 logging:
   level:
