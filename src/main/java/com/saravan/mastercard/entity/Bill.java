@@ -12,7 +12,7 @@ import java.math.BigDecimal;
 
 @Entity
 @Data
-@EqualsAndHashCode(of = {"itemName", "sellingPrice"})
+@EqualsAndHashCode(of = {"itemName", "sellingPrice"})  // same item but different pricing due to discount
 @Log4j2
 @NoArgsConstructor
 public class Bill implements Serializable, Cloneable {
@@ -101,13 +101,14 @@ public class Bill implements Serializable, Cloneable {
 
         String orderId = order != null && order.getOrderId() != null ? String.valueOf(order.getOrderId()) : "";
 
-        return String.format("Order %s : Item %s : qty : %d * $ %10.2f = %10.2f : %s",
+        return String.format("Order %s : Item %s : qty : %d * $ %10.2f = %10.2f : %s  : $ %10.2f ",
                 orderId,
                 itemName,
                 qty,
                 sellingPrice,
                 total,
-                discountedMsg
+                discountedMsg,
+                itemPrice
         );
 
 

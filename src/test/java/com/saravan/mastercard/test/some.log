@@ -33,6 +33,12 @@
  Item A :                                       => Total Price 30 => Total Order Sum accumulated : 30
  Bill{billId=10, itemName='A', itemPrice=10, promo1=false, promo2=true, promotion='promo 2', counts=3, totalPrice=30, discountedPrice=0, order=4, totalSum=30}
 
+select * from sorder;
+select * from bill ;
+select * from buy_item;
+select * from item;
+select * from promotion;
+
 
 
 

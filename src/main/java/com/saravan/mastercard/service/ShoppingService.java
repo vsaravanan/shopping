@@ -133,6 +133,7 @@ public class ShoppingService {
             else {
                 bill = items.get(i);
             }
+            log.info(bill);
             order.addBill(bill);
         }
 
