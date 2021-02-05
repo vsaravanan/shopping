@@ -20,7 +20,8 @@ public class Item {
     private BigDecimal itemPrice;
 
     @OneToOne(mappedBy = "item", cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY, optional = false)
+            fetch = FetchType.LAZY, optional = true) // true
+
     private Promotion promotion;
 
     public Item(String itemName, BigDecimal itemPrice) {

@@ -1,6 +1,5 @@
 package com.saravan.mastercard.test;
 
-import com.saravan.mastercard.ShoppingServiceApplication;
 import com.saravan.mastercard.entity.Bill;
 import com.saravan.mastercard.entity.BuyItem;
 import com.saravan.mastercard.entity.Catalog;
@@ -12,34 +11,31 @@ import com.saravan.mastercard.repo.OrderRepo;
 import com.saravan.mastercard.service.CatalogService;
 import com.saravan.mastercard.service.ShoppingService;
 import lombok.extern.log4j.Log4j2;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-//import org.junit.jupiter.api.BeforeEach;
-//import org.junit.jupiter.api.Nested;
-//import org.junit.jupiter.api.Test;
-//import org.junit.jupiter.api.extension.ExtendWith;
 
 
 @Log4j2
 @SpringBootTest
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = ShoppingServiceApplication.class)
-@ActiveProfiles("test")
+//@RunWith(SpringJUnit4ClassRunner.class)
+//@ContextConfiguration(classes = ShoppingServiceApplication.class) // optional in junit 5
 //@AutoConfigureTestDatabase(replace= AutoConfigureTestDatabase.Replace.NONE)
-//@Transactional
+@ExtendWith(SpringExtension.class)
+@ActiveProfiles("test")
+@Transactional // important in junit 5
 public class TestMasterCardServices {
 
     @Autowired
@@ -47,7 +43,6 @@ public class TestMasterCardServices {
 
 //    @Autowired
 //    final JdbcTemplate jdbcTemplate = null;
-
 
     @Autowired
     ShoppingService shoppingService;
@@ -66,11 +61,9 @@ public class TestMasterCardServices {
 
 
 
-    //    @Nested
-//    class TestShopping {
-//        @BeforeEach
-    @Before
-        public void setUp() {
+        @BeforeEach
+//    @Before
+        void setUp() {
             Catalog catalog = new Catalog("A", new BigDecimal(10), false, true);
             catalogService.priceItem(catalog);
 
@@ -100,138 +93,140 @@ public class TestMasterCardServices {
 
         private void clean() {
 
-            buyItemRepo.deleteAll();
-            billRepo.deleteAll();
-            orderRepo.deleteAll();
+//            buyItemRepo.deleteAll();
+//            billRepo.deleteAll();
+//            orderRepo.deleteAll();
 
         }
 
-        @Test
-        public void testShopping1() {
+//        @Nested
+//        class TestShopping {
 
-            clean();
+            @Test
+            public void testShopping1() {
 
-            List<BuyItem> buyItems = new ArrayList<>();
-            buyItemRepo.deleteAll();
+                clean();
 
-            buyItems.add(new BuyItem("I"));
-            buyItems.add(new BuyItem("G"));
-            buyItems.add(new BuyItem("H", 2));
+                List<BuyItem> buyItems = new ArrayList<>();
+                buyItemRepo.deleteAll();
 
-            Order shopping = shoppingService.createCheckout(buyItems);
-            shoppingService.checkout(shopping);
+                buyItems.add(new BuyItem("I"));
+                buyItems.add(new BuyItem("G"));
+                buyItems.add(new BuyItem("H", 2));
 
-            List< Order > listOrders = orderRepo.findAll();
-            List< Bill > listBills = billRepo.findAll();
+                Order shopping = shoppingService.createCheckout(buyItems);
+                shoppingService.checkout(shopping);
 
-            Order order = listOrders.stream().findFirst().orElse(null);
-            assertThat(order.getTotalSum().doubleValue()).isEqualTo(30.50);
-            Bill billH = listBills.stream().filter(b -> b.getItemName().equals("H")).findFirst().orElse(null);
-            assertThat(billH.getSellingPrice().doubleValue()).isEqualTo(4.50);
-//            log.info(billH);
-            log.info("testShopping1 completed");
-        }
+                List< Order > listOrders = orderRepo.findAll();
+                List< Bill > listBills = billRepo.findAll();
 
-
-
-        @Test
-        public void testShopping2() {
-
-            clean();
-
-            List<BuyItem> buyItems = new ArrayList<>();
+                Order order = listOrders.stream().findFirst().orElse(null);
+                assertThat(order.getTotalSum().doubleValue()).isEqualTo(30.50);
+                Bill billH = listBills.stream().filter(b -> b.getItemName().equals("H")).findFirst().orElse(null);
+                assertThat(billH.getSellingPrice().doubleValue()).isEqualTo(4.50);
+    //            log.info(billH);
+                log.info("testShopping1 completed");
+            }
 
 
-            buyItems.add(new BuyItem("C", 2));
-            buyItems.add(new BuyItem("A", 2));
-            buyItems.add(new BuyItem("B", 2));
-            buyItems.add(new BuyItem("E", 1));
-            buyItems.add(new BuyItem("F", 2));
 
-            Order shopping = shoppingService.createCheckout(buyItems);
-            shoppingService.checkout(shopping);
+            @Test
+            public void testShopping2() {
 
-            List< Order > listOrders = orderRepo.findAll();
-            List< Bill > listBills = billRepo.findAll();
+                clean();
 
-            Order order = listOrders.stream().findFirst().orElse(null) ;
-            assertThat(order.getTotalSum().doubleValue()).isEqualTo(42.0);
-            Bill billC = listBills.stream().filter(b -> b.getItemName().equals("C")).findFirst().orElse(null);
-            assert billC != null;
-            assertThat(billC.getSellingPrice().doubleValue()).isEqualTo(0.00);
-            assertThat(billC.getTotal().doubleValue()).isEqualTo(0.00);
-//            log.info(billC);
+                List<BuyItem> buyItems = new ArrayList<>();
 
 
-            log.info("testShopping2 completed");
-        }
+                buyItems.add(new BuyItem("C", 2));
+                buyItems.add(new BuyItem("A", 2));
+                buyItems.add(new BuyItem("B", 2));
+                buyItems.add(new BuyItem("E", 1));
+                buyItems.add(new BuyItem("F", 2));
+
+                Order shopping = shoppingService.createCheckout(buyItems);
+                shoppingService.checkout(shopping);
+
+                List< Order > listOrders = orderRepo.findAll();
+                List< Bill > listBills = billRepo.findAll();
+
+                Order order = listOrders.stream().findFirst().orElse(null) ;
+                assertThat(order.getTotalSum().doubleValue()).isEqualTo(42.0);
+                Bill billC = listBills.stream().filter(b -> b.getItemName().equals("C")).findFirst().orElse(null);
+                assert billC != null;
+                assertThat(billC.getSellingPrice().doubleValue()).isEqualTo(0.00);
+                assertThat(billC.getTotal().doubleValue()).isEqualTo(0.00);
+    //            log.info(billC);
+
+                log.info("testShopping2 completed");
+            }
 
 
-        @Test
-        public void testShopping3() {
+            @Test
+            public void testShopping3() {
 
-            clean();
+                clean();
 
-            List<BuyItem> buyItems = new ArrayList<>();
-
-
-            buyItems.add(new BuyItem("A", 3));
-            buyItems.add(new BuyItem("B", 2));
-
-            Order shopping = shoppingService.createCheckout(buyItems);
-            shoppingService.checkout(shopping);
-
-            List< Order > listOrders = orderRepo.findAll();
-            List< Bill > listBills = billRepo.findAll();
-            Order order = listOrders.stream().findFirst().orElse(null) ;
-            assert order != null;
-            assertThat(order.getTotalSum().doubleValue()).isEqualTo(35);
-            Bill billB = listBills.stream().filter(b -> b.getItemName().equals("B")).findFirst().orElse(null);
-            assert billB != null;
-            assertThat(billB.getSellingPrice().doubleValue()).isEqualTo(0.00);
-            BigDecimal sum = listBills.stream().filter(b -> b.getItemName().equals("B"))
-                    .map(x -> x.getTotal())
-                    .reduce(BigDecimal.ZERO, BigDecimal::add);
-            assertThat( sum.doubleValue()).isEqualTo(5.00);
-
-            log.info("testShopping3 completed");
-
-        }
-
-        @Test
-        public void testShopping4() {
-
-            clean();
-
-            List<BuyItem> buyItems = new ArrayList<>();
+                List<BuyItem> buyItems = new ArrayList<>();
 
 
-            buyItems.add(new BuyItem("A", 3));
+                buyItems.add(new BuyItem("A", 3));
+                buyItems.add(new BuyItem("B", 2));
 
-            Order shopping = shoppingService.createCheckout(buyItems);
-            shoppingService.checkout(shopping);
+                Order shopping = shoppingService.createCheckout(buyItems);
+                shoppingService.checkout(shopping);
+
+                List< Order > listOrders = orderRepo.findAll();
+                List< Bill > listBills = billRepo.findAll();
+                Order order = listOrders.stream().findFirst().orElse(null) ;
+                assert order != null;
+                assertThat(order.getTotalSum().doubleValue()).isEqualTo(35);
+                Bill billB = listBills.stream().filter(b -> b.getItemName().equals("B")).findFirst().orElse(null);
+                assert billB != null;
+                assertThat(billB.getSellingPrice().doubleValue()).isEqualTo(0.00);
+                BigDecimal sum = listBills.stream().filter(b -> b.getItemName().equals("B"))
+                        .map(x -> x.getTotal())
+                        .reduce(BigDecimal.ZERO, BigDecimal::add);
+                assertThat( sum.doubleValue()).isEqualTo(5.00);
+
+                log.info("testShopping3 completed");
+
+            }
+
+            @Test
+            public void testShopping4() {
+
+                clean();
+
+                List<BuyItem> buyItems = new ArrayList<>();
 
 
-            List< Order > listOrders = orderRepo.findAll();
-            List< Bill > listBills = billRepo.findAll();
-            Order order = listOrders.stream().findFirst().orElse(null) ;
-            assert order != null;
+                buyItems.add(new BuyItem("A", 3));
 
-            assertThat(order.getTotalSum().doubleValue()).isEqualTo(20);
-            Bill billA = listBills.stream().filter(b -> b.getItemName().equals("A"))
-                    .filter(f -> f.getSellingPrice().doubleValue() == (0.00))
-                    .findFirst().orElse(null);
-            assert billA != null;
+                Order shopping = shoppingService.createCheckout(buyItems);
+                shoppingService.checkout(shopping);
 
-//            jdbcTemplate.execute("insert into item values ('AA',10.00)");
-//            List<Item> items = itemRepo.findAll();
 
-            assertThat(billA.getSellingPrice().doubleValue()).isEqualTo(0.00);
+                List< Order > listOrders = orderRepo.findAll();
+                List< Bill > listBills = billRepo.findAll();
+                Order order = listOrders.stream().findFirst().orElse(null) ;
+                assert order != null;
 
-            log.info("testShopping4 completed");
+                assertThat(order.getTotalSum().doubleValue()).isEqualTo(20);
+                Bill billA = listBills.stream().filter(b -> b.getItemName().equals("A"))
+                        .filter(f -> f.getSellingPrice().doubleValue() == (0.00))
+                        .findFirst().orElse(null);
+                assert billA != null;
 
-        }
-//    }
+    //            jdbcTemplate.execute("insert into item values ('AA',10.00)");
+    //            List<Item> items = itemRepo.findAll();
 
+                assertThat(billA.getSellingPrice().doubleValue()).isEqualTo(0.00);
+
+                log.info("testShopping4 completed");
+
+            }
+
+//        }
 
 }
