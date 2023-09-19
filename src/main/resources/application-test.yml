@@ -4,8 +4,8 @@ server:
 spring:
   datasource:
     driverClassName: org.h2.Driver
-    url: jdbc:h2:mem:test;MODE=PostgreSQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
-#    url: jdbc:h2:tcp://localhost/~/mastercard;MODE=PostgreSQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+#    url: jdbc:h2:mem:test;MODE=PostgreSQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    url: jdbc:h2:tcp://localhost/~/mastercard;MODE=PostgreSQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
     username: sa
     password:
     driver-class-name: org.h2.Driver
@@ -27,12 +27,19 @@ spring:
 dirLog: /opt/shopping/log
 
 logging:
+#  file.clean-history-on-start: true
+#  file.cleanHistoryOnStart: true
+#  file.clearHistoryOnStart: true
   path: ${dirLog}/
-  file: ${dirLog}/shopping-app.log
-  pattern.console:
-  pattern.file: "%d{yyyy-MM-dd HH:mm:ss} | [%thread] | %-5level | %logger{36}.%M - %msg%n"
+  file.name: ${dirLog}/shopping-app.log
+  pattern.console: "%M - %msg%n"
+#  pattern.file: "%d{yyyy-MM-dd HH:mm:ss} | [%thread] | %-5level | %logger{36}.%M - %msg%n"
+  pattern.file: "%M - %msg%n"
+#  pattern.rolling-file-name: "${LOG_FILE}.%d{yyyy-MM-dd}.%i.log"
+  logback.rollingpolicy.file-name-pattern: "${LOG_FILE}.%d{yyyy-MM-dd}.%i.log"
   file.max-size: 1MB
-  file.max-history: 7
+  file.max-history: 5
   level:
     #    org.springframework: trace
     # org.hibernate.SQL: debug
+spring.output.ansi.enabled: always

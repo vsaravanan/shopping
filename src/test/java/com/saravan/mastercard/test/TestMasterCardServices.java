@@ -10,6 +10,7 @@ import com.saravan.mastercard.repo.ItemRepo;
 import com.saravan.mastercard.repo.OrderRepo;
 import com.saravan.mastercard.service.CatalogService;
 import com.saravan.mastercard.service.ShoppingService;
+import jakarta.transaction.Transactional;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,7 +20,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -64,6 +64,7 @@ public class TestMasterCardServices {
         @BeforeEach
 //    @Before
         void setUp() {
+//            MockitoAnnotations.openMocks(this);
             Catalog catalog = new Catalog("A", new BigDecimal(10), false, true);
             catalogService.priceItem(catalog);
 

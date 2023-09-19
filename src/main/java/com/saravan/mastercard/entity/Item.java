@@ -1,10 +1,10 @@
 package com.saravan.mastercard.entity;
 
+import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
 import java.math.BigDecimal;
 
 @Entity
@@ -53,7 +53,7 @@ public class Item {
         }
 
         return "Item{" +
-                ", itemName='" + itemName +
+                "  itemName='" + itemName +
                 ", itemPrice=" + itemPrice +
                 strPromotion +
                 "}";

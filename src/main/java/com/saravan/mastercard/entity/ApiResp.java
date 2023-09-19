@@ -2,13 +2,13 @@ package com.saravan.mastercard.entity;
 
 import org.springframework.http.HttpStatus;
 
-public class ApiResponse<T> {
+public class ApiResp<T> {
 
     private HttpStatus status;
     private String message;
     private Object result;
 
-    public ApiResponse(HttpStatus status, String message, Object result) {
+    public ApiResp(HttpStatus status, String message, Object result) {
         this.status = status;
         this.message = message;
         this.result = result;

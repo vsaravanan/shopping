@@ -1,11 +1,11 @@
 package com.saravan.mastercard.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
 import java.io.Serializable;
 
 
@@ -49,11 +49,8 @@ public class Promotion implements Serializable {
             strItem = ", item=null";
         }
 
-        return "Promotion{" +
-                strItem +
-                ", promo1=" + promo1 +
-                ", promo2=" + promo2 +
-                "}";
+        return "  promo1=" + (promo1 ? "T" : " ")  +
+                ", promo2=" + (promo2 ? "T" : " ") ;
 
     }
 }

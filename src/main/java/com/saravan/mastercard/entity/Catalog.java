@@ -30,7 +30,7 @@ public class Catalog {
         this.promotion = new Promotion(this.item, promo1, promo2);
         this.item.setPromotion(this.promotion);
 
-        log.info("new item added to the catalog " + item);
+        log.info(item);
 
 
 

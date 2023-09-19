@@ -1,12 +1,13 @@
 package com.saravan.mastercard.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
-import javax.persistence.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
@@ -81,15 +82,16 @@ public class Bill implements Serializable, Cloneable {
         Promotion promotion = item.getPromotion();
 
         if (promotion.getPromo1()) {
-            this.promotion = "promo 1";
+            this.promotion = "p1";
         }
         else if (promotion.getPromo2()) {
-            this.promotion = "promo 2";
+            this.promotion = "p2";
 
         } else {
-            this.promotion = ".     .";
+            this.promotion = ". .";
 
         }
+
 
     }
 

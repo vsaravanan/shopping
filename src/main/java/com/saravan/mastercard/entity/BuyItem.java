@@ -1,12 +1,11 @@
 package com.saravan.mastercard.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-
-import javax.persistence.*;
 
 @Entity
 @Data
